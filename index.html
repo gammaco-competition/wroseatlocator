@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <base target="_top">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>WRO 2026 Seat Search - Robots Meet Culture</title>
+  
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+  <style>
+    :root {
+      --wro-blue: #39a8df;
+      --wro-green: #10b981;
+      --wro-red: #eb1515;
+    }
+
+    body { font-family: 'Kanit', sans-serif; background-color: #f8fafc; color: #334155; padding-bottom: 100px; }
+    
+    /* Header & Logo with Background */
+    .header-section { 
+      text-align: center; 
+      padding: 60px 15px; 
+      margin-bottom: 30px;
+      background: linear-gradient(rgba(5, 150, 105, 0.85), rgba(6, 95, 70, 0.9)), 
+                  url('https://www.wro-association.org/wp-content/uploads/2023/12/banner-bg.jpg');
+      background-size: cover;
+      background-position: center;
+      border-radius: 0 0 2rem 2rem;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+      color: white;
+    }
+
+    .theme-logo { 
+      max-width: 140px; 
+      height: auto; 
+      margin-bottom: 15px; 
+      filter: drop-shadow(0 4px 8px rgba(0,0,0,0.3)); 
+    }
+
+    .app-title { font-weight: 600; text-shadow: 0 2px 4px rgba(0,0,0,0.2); }
+    .header-section .text-muted { color: rgba(255, 255, 255, 0.8) !important; }
+
+    /* Custom Cards */
+    .card-custom { border: none; border-radius: 1.25rem; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.08); background: white; }
+    .card-custom-green-border { border-top: 6px solid var(--wro-blue); }
+    
+    .search-label {
+      font-weight: 500;
+      color: #475569;
+      display: flex;
+      align-items: center;
+      font-size: 0.95rem;
+      margin-bottom: 0.75rem;
+    }
+
+    .search-label i { width: 25px; text-align: center; font-size: 1.1rem; }
+
+    .form-select-lg {
+      font-size: 1rem;
+      border: 1px solid #e2e8f0;
+      border-radius: 10px !important;
+      transition: all 0.2s;
+    }
+
+    .form-select-lg:focus {
+      border-color: var(--wro-green);
+      box-shadow: 0 0 0 0.25rem rgba(16, 185, 129, 0.1);
+    }
+
+    /* Result Area */
+    .result-label { font-size: 0.85rem; color: var(--wro-blue); text-transform: uppercase; font-weight: 600; letter-spacing: 0.05em; }
+    .seat-display { font-size: 3.5rem; font-weight: 800; color: var(--wro-red); margin: 5px 0; }
+    .team-name-display { color: #0f172a; font-weight: 600; margin-bottom: 15px; }
+    
+    .extra-info-row { background: #f1f5f9; padding: 15px; border-radius: 12px; }
+    .extra-info-label { font-size: 0.75rem; color: #64748b; text-transform: uppercase; font-weight: 600; }
+    .extra-info-value { font-size: 1.1rem; color: #111827; font-weight: 500; }
+
+    /* Member Grid */
+    .member-title { color: var(--wro-blue); font-weight: 600; border-left: 5px solid var(--wro-blue); padding-left: 10px; margin-bottom: 20px; }
+    .member-box { 
+      background: white; 
+      border: 1px solid #e2e8f0; 
+      border-radius: 1rem; 
+      padding: 1.25rem; 
+      height: 100%; 
+      box-shadow: 0 1px 3px rgba(0,0,0,0.05); 
+      transition: transform 0.2s;
+    }
+    .member-box:hover { transform: translateY(-3px); border-color: var(--wro-blue); }
+    .member-box-label { font-size: 0.75rem; color: #64748b; text-transform: uppercase; font-weight: 600; display: block; margin-bottom: 5px; }
+    .member-box-name { font-size: 1rem; font-weight: 500; color: #111827; }
+
+    .version-tag { position: fixed; bottom: 75px; right: 15px; font-size: 10px; color: #9ca3af; background: rgba(255,255,255,0.9); padding: 4px 12px; border-radius: 20px; border: 1px solid #e5e7eb; z-index: 1000; }
+
+    footer {
+      position: fixed;
+      bottom: 0; left: 0; width: 100%;
+      background: white;
+      padding: 15px 0;
+      border-top: 1px solid #e2e8f0;
+      text-align: center;
+      z-index: 1000;
+    }
+    .footer-text { font-size: 0.85rem; color: #64748b; margin: 0; }
+    .footer-brand { font-weight: 600; color: #334155; }
+  </style>
+</head>
+<body>
+
+  <div class="header-section">
+    <img src="https://img2.pic.in.th/Logo-WRO-2026-01bca9bfefae2e3f23.png" alt="WRO 2026 Logo" class="theme-logo">
+    <h2 class="app-title mb-0">WRO 2026 Seat Locator</h2>
+    <p class="text-muted opacity-80 mt-1">Robots Meet Culture</p>
+  </div>
+
+  <div class="container">
+    <div class="row justify-content-center">
+      <div class="col-lg-10 col-xl-9">
+        
+        <div class="card card-custom p-4 mb-4 shadow-sm border-0">
+          <div class="row g-3">
+            <div class="col-md-4">
+              <label class="search-label"><i class="fa-solid fa-layer-group text-success"></i>Category</label>
+              <select id="category" class="form-select form-select-lg" onchange="updateAgeGroups()">
+                <option value="">เลือกประเภท...</option>
+              </select>
+            </div>
+            <div class="col-md-4">
+              <label class="search-label"><i class="fa-solid fa-users-viewfinder text-success"></i>Age Group</label>
+              <select id="ageGroup" class="form-select form-select-lg" disabled onchange="updateTeamIDs()">
+                <option value="">เลือกอายุ...</option>
+              </select>
+            </div>
+            <div class="col-md-4">
+              <label class="search-label"><i class="fa-solid fa-id-card-clip text-success"></i>Team ID</label>
+              <select id="teamId" class="form-select form-select-lg" disabled onchange="autoSearch()">
+                <option value="">เลือกรหัสทีม...</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <div id="resultArea" style="display: none;">
+          <div class="card card-custom card-custom-green-border p-4 text-center mb-4">
+            <div class="result-label">ลำดับที่นั่งประจำทีม / Seat Number</div>
+            <div id="seatDisplay" class="seat-display">--</div>
+            <h3 id="teamNameDisplay" class="team-name-display"></h3>
+            
+            <div class="extra-info-row text-start">
+              <div class="extra-info-label">Institution / สถาบัน</div>
+              <div id="institutionDisplay" class="extra-info-value">-</div>
+            </div>
+          </div>
+          
+          <div class="card card-custom p-4">
+            <h5 class="member-title">ข้อมูลสมาชิกทีม (Team Members)</h5>
+            <div class="row g-3">
+              <div class="col-6 col-md-3">
+                <div class="member-box">
+                  <span class="member-box-label text-primary">Coach</span>
+                  <div id="coachDisplay" class="member-box-name">-</div>
+                </div>
+              </div>
+              <div class="col-6 col-md-3">
+                <div class="member-box">
+                  <span class="member-box-label">Member 1</span>
+                  <div id="m1Display" class="member-box-name">-</div>
+                </div>
+              </div>
+              <div class="col-6 col-md-3">
+                <div class="member-box">
+                  <span class="member-box-label">Member 2</span>
+                  <div id="m2Display" class="member-box-name">-</div>
+                </div>
+              </div>
+              <div class="col-6 col-md-3">
+                <div class="member-box">
+                  <span class="member-box-label">Member 3</span>
+                  <div id="m3Display" class="member-box-name">-</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <div class="version-tag">Version 1.8.5 (Build 2026.04)</div>
+
+  <footer>
+    <div class="container">
+      <p class="footer-text">
+        Organized by <span class="footer-brand">Gammaco (Thailand) Co., LTD.</span>
+      </p>
+    </div>
+  </footer>
+
+  <script>
+    let allData = [];
+
+    window.onload = function() {
+      google.script.run.withSuccessHandler(function(data) {
+        allData = data;
+        populateCategories();
+      }).getSpreadsheetData();
+    };
+
+    function populateCategories() {
+      const catSelect = document.getElementById('category');
+      const categories = [...new Set(allData.map(item => item.category))].filter(Boolean).sort();
+      categories.forEach(cat => catSelect.options.add(new Option(cat, cat)));
+    }
+
+    function updateAgeGroups() {
+      const catVal = document.getElementById('category').value;
+      const ageSelect = document.getElementById('ageGroup');
+      const teamSelect = document.getElementById('teamId');
+      
+      ageSelect.innerHTML = '<option value="">เลือกอายุ...</option>';
+      teamSelect.innerHTML = '<option value="">เลือกรหัสทีม...</option>';
+      teamSelect.disabled = true;
+      document.getElementById('resultArea').style.display = 'none';
+
+      if (catVal) {
+        const filteredAges = [...new Set(allData.filter(i => i.category === catVal).map(i => i.ageGroup))]
+                             .filter(Boolean)
+                             .sort();
+        filteredAges.forEach(age => ageSelect.options.add(new Option(age, age)));
+        ageSelect.disabled = false;
+      }
+    }
+
+    function updateTeamIDs() {
+      const catVal = document.getElementById('category').value;
+      const ageVal = document.getElementById('ageGroup').value;
+      const teamSelect = document.getElementById('teamId');
+      
+      teamSelect.innerHTML = '<option value="">เลือกรหัสทีม...</option>';
+      document.getElementById('resultArea').style.display = 'none';
+
+      if (ageVal) {
+        const filteredTeams = allData.filter(i => i.category === catVal && i.ageGroup === ageVal);
+        filteredTeams.forEach(team => teamSelect.options.add(new Option(team.teamId, team.teamId)));
+        teamSelect.disabled = false;
+      }
+    }
+
+    function autoSearch() {
+      const teamId = document.getElementById('teamId').value;
+      if (!teamId) return;
+
+      Swal.fire({
+        title: 'กำลังค้นหา...',
+        html: 'ระบบกำลังดึงข้อมูลที่นั่ง',
+        timer: 600,
+        timerProgressBar: true,
+        showConfirmButton: false,
+        didOpen: () => { Swal.showLoading() }
+      }).then(() => {
+        const result = allData.find(i => i.teamId === teamId);
+        if (result) {
+          document.getElementById('seatDisplay').innerText = result.seatZone || 'N/A';
+          document.getElementById('teamNameDisplay').innerText = result.teamName;
+          document.getElementById('institutionDisplay').innerText = result.institution || '-';
+          document.getElementById('coachDisplay').innerText = result.coach || '-';
+          document.getElementById('m1Display').innerText = result.member1 || '-';
+          document.getElementById('m2Display').innerText = result.member2 || '-';
+          document.getElementById('m3Display').innerText = result.member3 || '-';
+          document.getElementById('resultArea').style.display = 'block';
+          document.getElementById('resultArea').scrollIntoView({ behavior: 'smooth' });
+        }
+      });
+    }
+  </script>
+</body>
+</html>
