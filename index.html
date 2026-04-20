@@ -192,7 +192,7 @@
     </div>
   </div>
 
-  <div class="version-tag">Version 1.8.5 (Build 2026.04)</div>
+  <div class="version-tag">Version 1.8.6 (Build 2026.04)</div>
 
   <footer>
     <div class="container">
@@ -282,7 +282,7 @@
       }).then(() => {
         const result = allData.find(i => i.teamId === teamId);
         if (result) {
-          document.getElementById('seatDisplay').innerText = result.seatZone || 'N/A';
+          document.getElementById('seatDisplay').innerText = result.seatZone || '-';
           document.getElementById('teamNameDisplay').innerText = result.teamName;
           document.getElementById('institutionDisplay').innerText = result.institution || '-';
           document.getElementById('coachDisplay').innerText = result.coach || '-';
