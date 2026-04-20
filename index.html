@@ -204,17 +204,34 @@
 
   <script>
     let allData = [];
+    // *** สำคัญ: นำ URL ที่ได้จากการ Deploy Web App มาวางที่นี่ ***
+    const API_URL = "https://script.google.com/macros/s/AKfycbyVJOiT4tndTnGOATGPOPHryDXqsz663ju2dbH8YqP_zqWvgkH7Ry5WR4-QG9VODIPf/exec"; 
 
     window.onload = function() {
-      google.script.run.withSuccessHandler(function(data) {
-        allData = data;
-        populateCategories();
-      }).getSpreadsheetData();
+      // แสดง Loading ขณะดึงข้อมูล
+      Swal.fire({
+        title: 'กำลังเชื่อมต่อข้อมูล...',
+        text: 'กรุณารอสักครู่',
+        allowOutsideClick: false,
+        didOpen: () => { Swal.showLoading() }
+      });
+
+      fetch(API_URL)
+        .then(response => response.json())
+        .then(data => {
+          allData = data;
+          populateCategories();
+          Swal.close(); // ปิด Loading เมื่อโหลดเสร็จ
+        })
+        .catch(error => {
+          console.error('Error:', error);
+          Swal.fire('ผิดพลาด', 'ไม่สามารถโหลดข้อมูลจากระบบได้', 'error');
+        });
     };
 
     function populateCategories() {
       const catSelect = document.getElementById('category');
-      const categories = [...new Set(allData.map(item => item.category))].filter(Boolean).sort();
+      const categories = [...new Set(allData.map(item => item.category))].filter(Boolean);
       categories.forEach(cat => catSelect.options.add(new Option(cat, cat)));
     }
 
@@ -258,8 +275,7 @@
 
       Swal.fire({
         title: 'กำลังค้นหา...',
-        html: 'ระบบกำลังดึงข้อมูลที่นั่ง',
-        timer: 600,
+        timer: 500,
         timerProgressBar: true,
         showConfirmButton: false,
         didOpen: () => { Swal.showLoading() }
@@ -273,11 +289,12 @@
           document.getElementById('m1Display').innerText = result.member1 || '-';
           document.getElementById('m2Display').innerText = result.member2 || '-';
           document.getElementById('m3Display').innerText = result.member3 || '-';
+          
           document.getElementById('resultArea').style.display = 'block';
           document.getElementById('resultArea').scrollIntoView({ behavior: 'smooth' });
         }
       });
     }
-  </script>
+</script>
 </body>
 </html>
