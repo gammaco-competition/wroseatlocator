@@ -220,7 +220,7 @@
     </div>
   </div>
 
-  <div class="version-tag">Version 1.9.2 (Build 2026.05)</div>
+  <div class="version-tag">Version 1.9.3 (Build 2026.05)</div>
 
   <footer>
     <div class="container">
@@ -363,6 +363,99 @@
     }
   });
 }
+
+    // 1. ฟังก์ชันสำหรับเคลียร์ค่า
+function clearDisplay() {
+  document.getElementById('seatDisplay').innerText = '--';
+  document.getElementById('teamNameDisplay').innerText = '';
+  document.getElementById('institutionDisplay').innerText = '-';
+  document.getElementById('coachDisplay').innerText = '-';
+  document.getElementById('m1Display').innerText = '-';
+  document.getElementById('m2Display').innerText = '-';
+  document.getElementById('m3Display').innerText = '-';
+  document.getElementById('r1Display').innerText = '-';
+  document.getElementById('r2Display').innerText = '-';
+  document.getElementById('dot1').style.display = 'none';
+  document.getElementById('dot2').style.display = 'none';
+  document.getElementById('resultArea').style.display = 'none';
+}
+
+// 2. ปรับฟังก์ชัน autoSearch ให้รองรับการ "Refresh" โดยไม่โชว์ Loading
+function autoSearch(isManual = true) {
+  const teamId = document.getElementById('teamId').value;
+  if (!teamId) {
+    clearDisplay();
+    return;
+  }
+
+  // แสดง Loading เฉพาะตอนกดค้นหาเอง (Manual) ไม่แสดงตอน Auto-update
+  if (isManual) {
+    Swal.fire({ title: 'กำลังค้นหา...', timer: 500, showConfirmButton: false, didOpen: () => { Swal.showLoading() } });
+  }
+
+  const result = allData.find(i => i.teamId === teamId);
+  
+  if (result) {
+    // อัพเดทข้อมูล
+    document.getElementById('seatDisplay').innerText = result.seatZone || '-';
+    document.getElementById('teamNameDisplay').innerText = result.teamName;
+    document.getElementById('institutionDisplay').innerText = result.institution || '-';
+    document.getElementById('coachDisplay').innerText = result.coach || '-';
+    document.getElementById('m1Display').innerText = result.member1 || '-';
+    document.getElementById('m2Display').innerText = result.member2 || '-';
+    document.getElementById('m3Display').innerText = result.member3 || '-';
+
+    // อัพเดท Rounds
+    const r1El = document.getElementById('r1Display');
+    const dot1 = document.getElementById('dot1');
+    if (result.round1) {
+      r1El.innerText = result.round1;
+      dot1.style.display = 'inline-block';
+      const status = String(result.r1Status || '').trim().toLowerCase();
+      r1El.className = status === 'confirm' ? 'extra-info-value text-green' : 'extra-info-value text-red';
+      dot1.className = status === 'confirm' ? 'status-dot dot-green' : 'status-dot dot-red';
+    }
+
+    const r2El = document.getElementById('r2Display');
+    const dot2 = document.getElementById('dot2');
+    if (result.round2) {
+      r2El.innerText = result.round2;
+      dot2.style.display = 'inline-block';
+      const status = String(result.r2Status || '').trim().toLowerCase();
+      r2El.className = status === 'confirm' ? 'extra-info-value text-green' : 'extra-info-value text-red';
+      dot2.className = status === 'confirm' ? 'status-dot dot-green' : 'status-dot dot-red';
+    }
+
+    document.getElementById('resultArea').style.display = 'block';
+  }
+}
+
+// 3. ฟังก์ชันดึงข้อมูลใหม่ (Background Refresh)
+function startAutoRefresh() {
+  setInterval(() => {
+    fetch(API_URL)
+      .then(res => res.json())
+      .then(data => {
+        allData = data; // อัพเดทข้อมูลใหม่ลงตัวแปร global
+        // ถ้ามีการเลือกทีมค้างไว้ ให้สั่งอัพเดทค่าในหน้าจอทันที (แบบไม่โชว์ Loading)
+        if (document.getElementById('teamId').value) {
+          autoSearch(false); 
+          console.log("Data updated automatically at " + new Date().toLocaleTimeString());
+        }
+      });
+  }, 60000); // อัพเดททุก 60 วินาที
+}
+
+// ใน window.onload ให้เพิ่มการเรียก startAutoRefresh()
+window.onload = function() {
+  // ... โค้ดเดิมตอนโหลด ...
+  fetch(API_URL).then(res => res.json()).then(data => {
+     allData = data;
+     populateCategories();
+     Swal.close();
+     startAutoRefresh(); // เริ่มทำงานอัตโนมัติหลังโหลดเสร็จ
+  });
+};
 </script>
 </body>
 </html>
