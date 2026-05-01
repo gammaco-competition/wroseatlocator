@@ -186,6 +186,20 @@
               </div>
             </div>
           </div>
+          <div class="row g-2 mt-2">
+  <div class="col-6">
+    <div class="extra-info-row text-start">
+      <div class="extra-info-label">Round 1</div>
+      <div id="r1Display" class="extra-info-value">-</div>
+    </div>
+  </div>
+  <div class="col-6">
+    <div class="extra-info-row text-start">
+      <div class="extra-info-label">Round 2</div>
+      <div id="r2Display" class="extra-info-value">-</div>
+    </div>
+  </div>
+</div>
         </div>
 
       </div>
@@ -270,31 +284,36 @@
     }
 
     function autoSearch() {
-      const teamId = document.getElementById('teamId').value;
-      if (!teamId) return;
+  const teamId = document.getElementById('teamId').value;
+  if (!teamId) return;
 
-      Swal.fire({
-        title: 'กำลังค้นหา...',
-        timer: 500,
-        timerProgressBar: true,
-        showConfirmButton: false,
-        didOpen: () => { Swal.showLoading() }
-      }).then(() => {
-        const result = allData.find(i => i.teamId === teamId);
-        if (result) {
-          document.getElementById('seatDisplay').innerText = result.seatZone || '-';
-          document.getElementById('teamNameDisplay').innerText = result.teamName;
-          document.getElementById('institutionDisplay').innerText = result.institution || '-';
-          document.getElementById('coachDisplay').innerText = result.coach || '-';
-          document.getElementById('m1Display').innerText = result.member1 || '-';
-          document.getElementById('m2Display').innerText = result.member2 || '-';
-          document.getElementById('m3Display').innerText = result.member3 || '-';
-          
-          document.getElementById('resultArea').style.display = 'block';
-          document.getElementById('resultArea').scrollIntoView({ behavior: 'smooth' });
-        }
-      });
+  Swal.fire({
+    title: 'กำลังค้นหา...',
+    timer: 500,
+    timerProgressBar: true,
+    showConfirmButton: false,
+    didOpen: () => { Swal.showLoading() }
+  }).then(() => {
+    const result = allData.find(i => i.teamId === teamId);
+    if (result) {
+      document.getElementById('seatDisplay').innerText = result.seatZone || '-';
+      document.getElementById('teamNameDisplay').innerText = result.teamName;
+      document.getElementById('institutionDisplay').innerText = result.institution || '-';
+      
+      // เพิ่มบรรทัดเหล่านี้เพื่อแสดง Round
+      document.getElementById('r1Display').innerText = result.round1 || '-';
+      document.getElementById('r2Display').innerText = result.round2 || '-';
+      
+      document.getElementById('coachDisplay').innerText = result.coach || '-';
+      document.getElementById('m1Display').innerText = result.member1 || '-';
+      document.getElementById('m2Display').innerText = result.member2 || '-';
+      document.getElementById('m3Display').innerText = result.member3 || '-';
+      
+      document.getElementById('resultArea').style.display = 'block';
+      document.getElementById('resultArea').scrollIntoView({ behavior: 'smooth' });
     }
+  });
+}
 </script>
 </body>
 </html>
