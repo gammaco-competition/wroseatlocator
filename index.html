@@ -308,7 +308,24 @@
     }
 
     const result = allData.find(i => i.teamId === teamId);
+    
+    // --- จุดสำคัญ: เคลียร์ค่าเก่าก่อนเริ่มแสดงผลใหม่ทุกครั้ง ---
+    const r1El = document.getElementById('r1Display');
+    const dot1 = document.getElementById('dot1');
+    const r2El = document.getElementById('r2Display');
+    const dot2 = document.getElementById('dot2');
+    
+    // รีเซ็ตค่าเริ่มต้น
+    r1El.innerText = '-';
+    r2El.innerText = '-';
+    r1El.className = 'extra-info-value'; // รีเซ็ต class
+    r2El.className = 'extra-info-value'; // รีเซ็ต class
+    dot1.style.display = 'none';
+    dot2.style.display = 'none';
+    // ----------------------------------------------------
+
     if (result) {
+      // ข้อมูลทั่วไป
       document.getElementById('seatDisplay').innerText = result.seatZone || '-';
       document.getElementById('teamNameDisplay').innerText = result.teamName;
       document.getElementById('institutionDisplay').innerText = result.institution || '-';
@@ -317,23 +334,22 @@
       document.getElementById('m2Display').innerText = result.member2 || '-';
       document.getElementById('m3Display').innerText = result.member3 || '-';
 
-      // อัพเดท Rounds
-      const r1El = document.getElementById('r1Display');
-      const dot1 = document.getElementById('dot1');
+      // อัพเดท Round 1 (ถ้ามีข้อมูลค่อยใส่)
       if (result.round1) {
         r1El.innerText = result.round1;
         dot1.style.display = 'inline-block';
         const status = String(result.r1Status || '').trim().toLowerCase();
+        // เพิ่ม class ตามสถานะ
         r1El.className = status === 'confirm' ? 'extra-info-value text-green' : 'extra-info-value text-red';
         dot1.className = status === 'confirm' ? 'status-dot dot-green' : 'status-dot dot-red';
       }
 
-      const r2El = document.getElementById('r2Display');
-      const dot2 = document.getElementById('dot2');
+      // อัพเดท Round 2 (ถ้ามีข้อมูลค่อยใส่)
       if (result.round2) {
         r2El.innerText = result.round2;
         dot2.style.display = 'inline-block';
         const status = String(result.r2Status || '').trim().toLowerCase();
+        // เพิ่ม class ตามสถานะ
         r2El.className = status === 'confirm' ? 'extra-info-value text-green' : 'extra-info-value text-red';
         dot2.className = status === 'confirm' ? 'status-dot dot-green' : 'status-dot dot-red';
       }
