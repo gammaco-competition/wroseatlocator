@@ -220,7 +220,7 @@
     </div>
   </div>
 
-  <div class="version-tag">Version 1.9.1 (Build 2026.05)</div>
+  <div class="version-tag">Version 1.9.2 (Build 2026.05)</div>
 
   <footer>
     <div class="container">
@@ -301,51 +301,67 @@
   const teamId = document.getElementById('teamId').value;
   if (!teamId) return;
 
-  const result = allData.find(i => i.teamId === teamId);
-  if (result) {
-    document.getElementById('seatDisplay').innerText = result.seatZone || '-';
-    document.getElementById('teamNameDisplay').innerText = result.teamName;
-    document.getElementById('institutionDisplay').innerText = result.institution || '-';
+  Swal.fire({
+    title: 'กำลังค้นหา...',
+    timer: 500,
+    timerProgressBar: true,
+    showConfirmButton: false,
+    didOpen: () => { Swal.showLoading() }
+  }).then(() => {
+    const result = allData.find(i => i.teamId === teamId);
     
-    // ตั้งค่าแสดงผล Round 1
-    const r1El = document.getElementById('r1Display');
-    const dot1 = document.getElementById('dot1');
-    if (result.round1) {
+    if (result) {
+      // ข้อมูลพื้นฐาน
+      document.getElementById('seatDisplay').innerText = result.seatZone || '-';
+      document.getElementById('teamNameDisplay').innerText = result.teamName;
+      document.getElementById('institutionDisplay').innerText = result.institution || '-';
+      
+      // ข้อมูลสมาชิก (ส่วนที่หายไป)
+      document.getElementById('coachDisplay').innerText = result.coach || '-';
+      document.getElementById('m1Display').innerText = result.member1 || '-';
+      document.getElementById('m2Display').innerText = result.member2 || '-';
+      document.getElementById('m3Display').innerText = result.member3 || '-';
+
+      // แสดงผล Round 1
+      const r1El = document.getElementById('r1Display');
+      const dot1 = document.getElementById('dot1');
+      if (result.round1) {
         r1El.innerText = result.round1;
         dot1.style.display = 'inline-block';
         if (result.r1Status === "Confirm") {
-            r1El.className = 'extra-info-value text-green';
-            dot1.className = 'status-dot dot-green';
+          r1El.className = 'extra-info-value text-green';
+          dot1.className = 'status-dot dot-green';
         } else {
-            r1El.className = 'extra-info-value text-red';
-            dot1.className = 'status-dot dot-red';
+          r1El.className = 'extra-info-value text-red';
+          dot1.className = 'status-dot dot-red';
         }
-    } else {
+      } else {
         r1El.innerText = '-';
         dot1.style.display = 'none';
-    }
+      }
 
-    // ตั้งค่าแสดงผล Round 2
-    const r2El = document.getElementById('r2Display');
-    const dot2 = document.getElementById('dot2');
-    if (result.round2) {
+      // แสดงผล Round 2
+      const r2El = document.getElementById('r2Display');
+      const dot2 = document.getElementById('dot2');
+      if (result.round2) {
         r2El.innerText = result.round2;
         dot2.style.display = 'inline-block';
         if (result.r2Status === "Confirm") {
-            r2El.className = 'extra-info-value text-green';
-            dot2.className = 'status-dot dot-green';
+          r2El.className = 'extra-info-value text-green';
+          dot2.className = 'status-dot dot-green';
         } else {
-            r2El.className = 'extra-info-value text-red';
-            dot2.className = 'status-dot dot-red';
+          r2El.className = 'extra-info-value text-red';
+          dot2.className = 'status-dot dot-red';
         }
-    } else {
+      } else {
         r2El.innerText = '-';
         dot2.style.display = 'none';
-    }
+      }
 
-    document.getElementById('resultArea').style.display = 'block';
-    document.getElementById('resultArea').scrollIntoView({ behavior: 'smooth' });
-  }
+      document.getElementById('resultArea').style.display = 'block';
+      document.getElementById('resultArea').scrollIntoView({ behavior: 'smooth' });
+    }
+  });
 }
 </script>
 </body>
