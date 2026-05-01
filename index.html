@@ -97,6 +97,14 @@
 
     .version-tag { position: fixed; bottom: 75px; right: 15px; font-size: 10px; color: #9ca3af; background: rgba(255,255,255,0.9); padding: 4px 12px; border-radius: 20px; border: 1px solid #e5e7eb; z-index: 1000; }
 
+     /* ส่วนเพิ่มสำหรับสถานะ */
+@keyframes blink { 0% { opacity: 1; } 50% { opacity: 0.2; } 100% { opacity: 1; } }
+.status-dot { width: 10px; height: 10px; border-radius: 50%; display: inline-block; margin-right: 5px; }
+.dot-red { background-color: var(--wro-red); animation: blink 1s infinite; }
+.dot-green { background-color: var(--wro-green); }
+.text-red { color: var(--wro-red); }
+.text-green { color: var(--wro-green); }
+    
     footer {
       position: fixed;
       bottom: 0; left: 0; width: 100%;
@@ -114,7 +122,8 @@
 
   <div class="header-section">
     <img src="https://img2.pic.in.th/Logo-WRO-2026-01bca9bfefae2e3f23.png" alt="WRO 2026 Logo" class="theme-logo">
-    <h2 class="app-title mb-0">WRO 2026 Seat Locator</h2>
+    <h2 class="app-title mb-0">WRO 2026</h2>
+    <h3 class="app-title mb-0">Seat Locator & Result</h3>
     <p class="text-muted opacity-80 mt-1">Robots Meet Culture</p>
   </div>
 
@@ -189,17 +198,17 @@
           
           <br>
           <div class="card card-custom p-4">
-          <h5 class="member-title">ผลการแข่งขัน</h5>
+          <h5 class="member-title">ผลการแข่งขัน (Result)</h5>
           <div class="row g-2 mt-2">
   <div class="col-6">
     <div class="extra-info-row text-start">
-      <div class="extra-info-label">Round 1</div>
+      <div class="extra-info-label">Round 1 <span id="dot1" class="status-dot" style="display:none;"></span></div>
       <div id="r1Display" class="extra-info-value">-</div>
     </div>
   </div>
   <div class="col-6">
     <div class="extra-info-row text-start">
-      <div class="extra-info-label">Round 2</div>
+      <div class="extra-info-label">Round 2 <span id="dot2" class="status-dot" style="display:none;"></span></div>
       <div id="r2Display" class="extra-info-value">-</div>
     </div>
   </div>
@@ -211,7 +220,7 @@
     </div>
   </div>
 
-  <div class="version-tag">Version 1.8.6 (Build 2026.04)</div>
+  <div class="version-tag">Version 1.9.1 (Build 2026.05)</div>
 
   <footer>
     <div class="container">
@@ -292,32 +301,51 @@
   const teamId = document.getElementById('teamId').value;
   if (!teamId) return;
 
-  Swal.fire({
-    title: 'กำลังค้นหา...',
-    timer: 500,
-    timerProgressBar: true,
-    showConfirmButton: false,
-    didOpen: () => { Swal.showLoading() }
-  }).then(() => {
-    const result = allData.find(i => i.teamId === teamId);
-    if (result) {
-      document.getElementById('seatDisplay').innerText = result.seatZone || '-';
-      document.getElementById('teamNameDisplay').innerText = result.teamName;
-      document.getElementById('institutionDisplay').innerText = result.institution || '-';
-      
-      // เพิ่มบรรทัดเหล่านี้เพื่อแสดง Round
-      document.getElementById('r1Display').innerText = result.round1 || '-';
-      document.getElementById('r2Display').innerText = result.round2 || '-';
-      
-      document.getElementById('coachDisplay').innerText = result.coach || '-';
-      document.getElementById('m1Display').innerText = result.member1 || '-';
-      document.getElementById('m2Display').innerText = result.member2 || '-';
-      document.getElementById('m3Display').innerText = result.member3 || '-';
-      
-      document.getElementById('resultArea').style.display = 'block';
-      document.getElementById('resultArea').scrollIntoView({ behavior: 'smooth' });
+  const result = allData.find(i => i.teamId === teamId);
+  if (result) {
+    document.getElementById('seatDisplay').innerText = result.seatZone || '-';
+    document.getElementById('teamNameDisplay').innerText = result.teamName;
+    document.getElementById('institutionDisplay').innerText = result.institution || '-';
+    
+    // ตั้งค่าแสดงผล Round 1
+    const r1El = document.getElementById('r1Display');
+    const dot1 = document.getElementById('dot1');
+    if (result.round1) {
+        r1El.innerText = result.round1;
+        dot1.style.display = 'inline-block';
+        if (result.r1Status === "Confirm") {
+            r1El.className = 'extra-info-value text-green';
+            dot1.className = 'status-dot dot-green';
+        } else {
+            r1El.className = 'extra-info-value text-red';
+            dot1.className = 'status-dot dot-red';
+        }
+    } else {
+        r1El.innerText = '-';
+        dot1.style.display = 'none';
     }
-  });
+
+    // ตั้งค่าแสดงผล Round 2
+    const r2El = document.getElementById('r2Display');
+    const dot2 = document.getElementById('dot2');
+    if (result.round2) {
+        r2El.innerText = result.round2;
+        dot2.style.display = 'inline-block';
+        if (result.r2Status === "Confirm") {
+            r2El.className = 'extra-info-value text-green';
+            dot2.className = 'status-dot dot-green';
+        } else {
+            r2El.className = 'extra-info-value text-red';
+            dot2.className = 'status-dot dot-red';
+        }
+    } else {
+        r2El.innerText = '-';
+        dot2.style.display = 'none';
+    }
+
+    document.getElementById('resultArea').style.display = 'block';
+    document.getElementById('resultArea').scrollIntoView({ behavior: 'smooth' });
+  }
 }
 </script>
 </body>
